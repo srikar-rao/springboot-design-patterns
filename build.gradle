@@ -26,6 +26,19 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.h2database:h2'
+	
+	// Apache POI for Excel file generation
+	implementation 'org.apache.poi:poi:5.2.5'
+	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+	
+	// Apache Commons IO for file operations
+	implementation 'commons-io:commons-io:2.15.1'
+	
+	// OpenCSV for CSV file generation
+	implementation 'com.opencsv:opencsv:5.9'
+	
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

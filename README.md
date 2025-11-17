@@ -107,3 +107,59 @@ POST /api/book/price
 
 ---
 *End of Discount Engine Documentation*
+
+## Loan Processor Overview
+
+### Purpose
+The Loan Processor feature provides a simulation of a loan application and approval workflow. It is designed to be a comprehensive educational tool, demonstrating how a variety of design patterns can be orchestrated to build a robust, extensible, and state-driven system. The feature uses an in-memory process to evaluate loan applications based on type, applicant data, and a series of business rules.
+
+### Design Patterns Demonstrated
+
+- **State Pattern**: Implemented using a sealed interface `LoanStatus` and Java's pattern matching `switch` in the `LoanProcessor` to manage the loan application's lifecycle (Submitted → Reviewed → Approved/Denied).
+- **Template Method Pattern**: The `LoanProcessor` interface defines the skeleton of the loan evaluation process, allowing concrete implementations (`HomeLoanProcessor`, `VehicleLoanProcessor`) to provide specific logic for handling different states.
+- **Factory Pattern**: The `LoanProcessorFactory` creates the appropriate `LoanProcessor` instance based on the `LoanType`, decoupling the client from the concrete processor classes.
+- **Chain of Responsibility Pattern**: A sequence of `ValidationHandler` implementations (`IncomeValidation`, `PropertyValidation`, `CreditScoreValidation`) creates a pipeline to validate a loan application in sequential steps.
+- **Specification Pattern**: `LoanSpecification` and its implementations (`IncomeThresholdSpecification`, `LtvRatioSpecification`) encapsulate individual business rules in a reusable and composable manner.
+- **Strategy Pattern**: The `InterestRateStrategy` interface and its implementations (`LtvBasedInterestStrategy`, `DefaultRateStrategy`) allow for flexible and interchangeable algorithms for calculating interest rates.
+- **Command Pattern**: The `ApplyLoanCommand` encapsulates the loan application request as an object, allowing for clean separation and potential for extension (e.g., logging, queuing).
+- **Null Object Pattern**: `LoanNullProcessor` provides a safe, default handler for unknown or invalid loan types, preventing null pointer exceptions and ensuring graceful failure.
+
+### Architecture Summary
+
+The feature is architected with a clear separation of concerns:
+
+1.  **Controller Layer** (`LoanController`): Provides the `/api/loan/apply` endpoint.
+2.  **Service Layer** (`LoanService`): Orchestrates the entire process. It uses the `LoanProcessorFactory` to get the correct processor and then initiates the state machine.
+3.  **Processor and Factory** (`LoanProcessor`, `LoanProcessorFactory`): The core of the feature, managing state transitions and creating the appropriate processor.
+4.  **Validation Chain**: A series of handlers that an application must pass through.
+5.  **Strategies and Specifications**: Reusable components that encapsulate business logic for interest calculation and validation.
+6.  **Models**: `LoanApplicationRequest`, `LoanResponse`, and the `LoanStatus` sealed interface define the data and state of the system.
+
+### Example Request/Response
+
+**Request:**
+```json
+POST /api/loan/apply
+{
+  "applicantName": "John Doe",
+  "loanType": "HOME",
+  "requestedAmount": 250000,
+  "propertyValue": 400000,
+  "income": 95000,
+  "loanTermYears": 15
+}
+```
+
+**Response:**
+```json
+{
+  "applicationId": "LN-2025-ABCD",
+  "status": "APPROVED",
+  "approvedAmount": 225000.0,
+  "interestRate": 6.5,
+  "message": "Loan approved based on eligibility rules"
+}
+```
+
+---
+*End of Loan Processor Documentation*

@@ -53,3 +53,57 @@ The export feature is designed for easy extension:
 
 --- 
 *End of Export Feature Documentation*
+
+## Discount Engine Overview
+
+### Purpose
+The Discount Engine feature demonstrates how multiple design patterns—Composite, Chain of Responsibility, Specification, Rule, and Null Object—can be combined to create a flexible and extensible pricing system. It calculates the final price of a book by applying various discounts based on a selected strategy (`COMPOSITE`, `CHAINED`, etc.), showcasing a clean separation of concerns and high cohesion.
+
+### Design Patterns Demonstrated
+
+- **Composite Pattern**: Implemented with `DiscountComponent` and `CompositeDiscount` to group multiple discounts and treat them as a single unit.
+- **Chain of Responsibility Pattern**: Implemented with `DiscountHandler` and `ChainedDiscountProcessor` to apply discounts sequentially, allowing each handler in the chain to process the request.
+- **Specification Pattern**: Implemented with `DiscountSpecification` and its concrete implementations (`StartsWithCSpecification`, `BulkPurchaseSpecification`) to define complex business rules for discount eligibility in a composable way.
+- **Rule Pattern**: Implemented with `DiscountRule` to encapsulate the specific logic for each discount, making the system easy to extend with new rules.
+- **Null Object Pattern**: Implemented with `NoDiscountRule` to provide a safe, default "do-nothing" behavior, eliminating the need for null checks when no discount is applicable.
+
+### Architecture Summary
+
+The feature's architecture is designed around composition and clear separation of responsibilities:
+
+1.  **Controller Layer** (`DiscountController`): Exposes the `/api/book/price` endpoint to receive pricing requests.
+2.  **Service Layer** (`DiscountService`): Orchestrates the discount calculation. It selects the appropriate strategy (e.g., Composite, Chained) and assembles the necessary discount components, rules, and specifications to compute the final price.
+3.  **Pattern Components**: A collection of interfaces and classes that implement the core design patterns, providing the building blocks for the discount logic.
+4.  **Models** (`Book`, `DiscountResponse`): Define the data structures for API requests and responses.
+
+### Example Request/Response
+
+**Request:**
+```json
+POST /api/book/price
+{
+  "bookName": "Clean Code",
+  "basePrice": 50.00,
+  "discountMode": "COMPOSITE"
+}
+```
+
+**Response:**
+```json
+{
+  "bookName": "Clean Code",
+  "originalPrice": 50.00,
+  "finalPrice": 35.00,
+  "discountsApplied": [
+    {"discountType": "NameStartsWithCDiscount", "amount": 5.00, "description": "Book name starts with 'C'"},
+    {"discountType": "HolidayDiscount", "amount": 10.00, "description": "Seasonal offer applied"}
+  ],
+  "notes": [
+    "COMPOSITE discount mode applied",
+    "Final price validated not below $0"
+  ]
+}
+```
+
+---
+*End of Discount Engine Documentation*

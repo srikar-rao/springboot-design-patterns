@@ -1,3 +1,5 @@
+> **Note:** This project was developed by an AI assistant, following high-level instructions and guidance from a developer. All code is 100% AI-generated.
+
 # Spring Boot Design Patterns
 
 This project demonstrates the implementation of various design patterns in a Spring Boot application. The project showcases how design patterns can be used to create maintainable, extensible, and flexible software architecture.
